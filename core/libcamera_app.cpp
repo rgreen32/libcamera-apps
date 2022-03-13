@@ -441,13 +441,13 @@ void LibcameraApp::StartCamera()
 	if (!controls_.contains(controls::Sharpness))
 		controls_.set(controls::Sharpness, options_->sharpness);
 
+	post_processor_.Start();
+
 	if (camera_->start(&controls_))
 		throw std::runtime_error("failed to start camera");
 	controls_.clear();
 	camera_started_ = true;
 	last_timestamp_ = 0;
-
-	post_processor_.Start();
 
 	camera_->requestCompleted.connect(this, &LibcameraApp::requestComplete);
 
@@ -662,8 +662,7 @@ void LibcameraApp::setupCapture()
 				if (i == buffer->planes().size() - 1 || plane.fd.get() != buffer->planes()[i + 1].fd.get())
 				{
 					void *memory = mmap(NULL, buffer_size, PROT_READ | PROT_WRITE, MAP_SHARED, plane.fd.get(), 0);
-					mapped_buffers_[buffer.get()].push_back(
-						libcamera::Span<uint8_t>(static_cast<uint8_t *>(memory), buffer_size));
+					mapped_buffers_[buffer.get()].push_back(libcamera::Span<uint8_t>(static_cast<uint8_t *>(memory), buffer_size));
 					buffer_size = 0;
 				}
 			}
@@ -759,7 +758,6 @@ void LibcameraApp::stopPreview()
 		preview_cond_var_.notify_one();
 	}
 	preview_thread_.join();
-	preview_item_ = PreviewItem();
 }
 
 void LibcameraApp::previewThread()

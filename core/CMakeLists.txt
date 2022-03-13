@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 
 include(GNUInstallDirs)
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 find_package(Boost REQUIRED COMPONENTS program_options)
 
 add_custom_target(VersionCpp ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_SOURCE_DIR} -P ${CMAKE_CURRENT_LIST_DIR}/version.cmake)
@@ -11,6 +11,7 @@ add_library(libcamera_app libcamera_app.cpp post_processor.cpp version.cpp optio
 add_dependencies(libcamera_app VersionCpp)
 
 set_target_properties(libcamera_app PROPERTIES PREFIX "" IMPORT_PREFIX "")
+target_include_directories(libcamera_app PUBLIC "../")
 target_link_libraries(libcamera_app pthread preview ${LIBCAMERA_LINK_LIBRARIES} ${Boost_LIBRARIES} post_processing_stages)
 
 install(TARGETS libcamera_app LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

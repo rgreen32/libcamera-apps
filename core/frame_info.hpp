@@ -6,7 +6,6 @@
  */
 #include <array>
 #include <iomanip>
-#include <sstream>
 #include <string>
 
 #include <libcamera/control_ids.h>
